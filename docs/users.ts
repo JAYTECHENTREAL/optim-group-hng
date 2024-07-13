@@ -43,7 +43,7 @@ export const userSchema = {
 };
 
 export const usersTransactions = {
-  tags: "Users",
+  tags: ['user'],
   summary: "Gets a user by ID",
   description:
     "A detailed description of the operation.Use markdown for rich text representation, such as **bold**, *italic*, and [links](https://swagger.io)",
