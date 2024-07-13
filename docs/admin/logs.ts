@@ -1,5 +1,10 @@
 export const adminGetActivityLogs = {
   tags: ['Super Admin'],
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
   summary: 'Get activity logs',
   description: 'Retrieve a list of activity logs.',
   operationId: 'getActivityLogs',
@@ -20,6 +25,11 @@ export const adminGetActivityLogs = {
 
 export const adminGetTransactionRecords = {
   tags: ['Transactions'],
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
   summary: 'Get transaction records',
   description: 'Retrieve a list of transaction records.',
   operationId: 'getTransactionRecords',
@@ -30,7 +40,7 @@ export const adminGetTransactionRecords = {
         'application/json': {
           schema: {
             type: 'array',
-            items: { $ref: '#/components/schemas/Transaction' },
+            items: { $ref: '#/components/schemas/Transactions' },
           },
         },
       },

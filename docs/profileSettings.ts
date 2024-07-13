@@ -1,6 +1,11 @@
 export const profileSettings = {
   get: {
     tags: ['Profile'],
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
     summary: 'Get profile settings',
     description: 'Retrieve user profile settings.',
     operationId: 'getProfileSettings',
@@ -17,6 +22,11 @@ export const profileSettings = {
   },
   put: {
     tags: ['Profile'],
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
     summary: 'Update profile settings',
     description: 'Update user profile settings.',
     operationId: 'updateProfileSettings',

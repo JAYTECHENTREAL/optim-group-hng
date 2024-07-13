@@ -65,23 +65,6 @@ export const notificationSchema = {
   },
 };
 
-export const usersTransactions = {
-  tags: ["user"],
-  summary: "Gets a user by ID",
-  description:
-    "A detailed description of the operation.Use markdown for rich text representation, such as **bold**, *italic*, and [links](https://swagger.io)",
-  operationId: "getUserById",
-  parameters: {
-    name: "id",
-    in: "path",
-    description: "User ID",
-    required: true,
-    schema: {
-      type: "integer",
-      format: "int64",
-    },
-  },
-};
 export const language = {
   get: {
     tags: ["Settings"],
@@ -166,6 +149,366 @@ export const language = {
           },
         },
       },
+    },
+  },
+};
+
+export const userAddOrganisation = {
+  tags: ["User"],
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
+  summary: "Create a new organization",
+  description: "Create a new organization with super admin privileges.",
+  operationId: "createOrganisationForSuperAdmin",
+  requestBody: {
+    required: true,
+    content: {
+      "application/json": {
+        schema: { $ref: "#/components/schemas/Organisation" },
+      },
+    },
+  },
+  responses: {
+    201: {
+      description: "Organization created successfully.",
+      content: {
+        "application/json": {
+          schema: { $ref: "#/components/schemas/Organisation" },
+        },
+      },
+    },
+  },
+};
+
+export const userUpdateOrgById = {
+  tags: ["User"],
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
+  summary: "Update an organization by ID",
+  description:
+    "Update organization details by its ID with super admin privileges.",
+  operationId: "updateOrganisationByIdForSuperAdmin",
+  parameters: [
+    {
+      name: "id",
+      in: "path",
+      required: true,
+      description: "Organization ID",
+      schema: {
+        type: "integer",
+        format: "int64",
+      },
+    },
+  ],
+  requestBody: {
+    required: true,
+    content: {
+      "application/json": {
+        schema: { $ref: "#/components/schemas/Organisation" },
+      },
+    },
+  },
+  responses: {
+    200: {
+      description: "Organization updated successfully.",
+      content: {
+        "application/json": {
+          schema: { $ref: "#/components/schemas/Organisation" },
+        },
+      },
+    },
+    404: {
+      description: "Organization not found.",
+    },
+  },
+};
+
+export const userDeleteOrgById = {
+  tags: ["User"],
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
+  summary: "Delete an organization by ID",
+  description:
+    "Delete an organization from the system by its ID with super admin privileges.",
+  operationId: "deleteOrganisationByIdForSuperAdmin",
+  parameters: [
+    {
+      name: "id",
+      in: "path",
+      required: true,
+      description: "Organization ID",
+      schema: {
+        type: "integer",
+        format: "int64",
+      },
+    },
+  ],
+  responses: {
+    204: {
+      description: "Organization deleted successfully.",
+    },
+    404: {
+      description: "Organization not found.",
+    },
+  },
+};
+
+export const userGetOrganisations = {
+  tags: ["User"],
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
+  summary: "Get all organizations",
+  description:
+    "Retrieve a list of all organizations with super admin privileges.",
+  operationId: "getAllOrganisationsForSuperAdmin",
+  responses: {
+    200: {
+      description: "A list of organizations.",
+      content: {
+        "application/json": {
+          schema: {
+            type: "array",
+            items: { $ref: "#/components/schemas/Organisation" },
+          },
+        },
+      },
+    },
+  },
+};
+
+export const userGetOrgById = {
+  tags: ["User"],
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
+  summary: "Get an organization by ID",
+  description:
+    "Retrieve an organization by its ID with super admin privileges.",
+  operationId: "getOrganisationByIdForSuperAdmin",
+  parameters: [
+    {
+      name: "id",
+      in: "path",
+      required: true,
+      description: "Organization ID",
+      schema: {
+        type: "integer",
+        format: "int64",
+      },
+    },
+  ],
+  responses: {
+    200: {
+      description: "Organization details.",
+      content: {
+        "application/json": {
+          schema: { $ref: "#/components/schemas/Organisation" },
+        },
+      },
+    },
+    404: {
+      description: "Organization not found.",
+    },
+  },
+};
+
+// Add user's
+
+export const userUpdateUserById = {
+  tags: ["User"],
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
+  summary: "Update a user by ID",
+  description: "Update user details by their ID.",
+  operationId: "updateUserById",
+  parameters: [
+    {
+      name: "id",
+      in: "path",
+      required: true,
+      description: "User ID",
+      schema: {
+        type: "integer",
+        format: "int64",
+      },
+    },
+  ],
+  requestBody: {
+    required: true,
+    content: {
+      "application/json": {
+        schema: { $ref: "#/components/schemas/User" },
+      },
+    },
+  },
+  responses: {
+    200: {
+      description: "User updated successfully.",
+      content: {
+        "application/json": {
+          schema: { $ref: "#/components/schemas/User" },
+        },
+      },
+    },
+    404: {
+      description: "User not found.",
+    },
+  },
+};
+
+export const userDeleteUserById = {
+  tags: ["User"],
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
+  summary: "Delete a user by ID",
+  description:
+    "Delete a user from the system by their ID with super admin privileges.",
+  operationId: "deleteUserByIdForSuperAdmin",
+  parameters: [
+    {
+      name: "id",
+      in: "path",
+      required: true,
+      description: "User ID",
+      schema: {
+        type: "integer",
+        format: "int64",
+      },
+    },
+  ],
+  responses: {
+    204: {
+      description: "User deleted successfully.",
+    },
+    404: {
+      description: "User not found.",
+    },
+  },
+};
+
+export const userGetUserById = {
+  tags: ["User"],
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
+  summary: "Get a user by ID",
+  description: "Retrieve a user by their ID with super admin privileges.",
+  operationId: "getUserByIdForSuperAdmin",
+  parameters: [
+    {
+      name: "id",
+      in: "path",
+      required: true,
+      description: "User ID",
+      schema: {
+        type: "integer",
+        format: "int64",
+      },
+    },
+  ],
+  responses: {
+    200: {
+      description: "User details.",
+      content: {
+        "application/json": {
+          schema: { $ref: "#/components/schemas/User" },
+        },
+      },
+    },
+    404: {
+      description: "User not found.",
+    },
+  },
+};
+
+export const changePassword = {
+  tags: ["User"],
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
+  summary: "Change user password by ID",
+  description: "Update user password by their ID.",
+  operationId: "updateUserPasswordById",
+  parameters: [
+    {
+      name: "id",
+      in: "path",
+      required: true,
+      description: "User ID",
+      schema: {
+        type: "integer",
+        format: "int64",
+      },
+    },
+  ],
+  requestBody: {
+    required: true,
+    content: {
+      "application/json": {
+        schema: {
+          type: "object",
+          properties: {
+            oldPassword: {
+              type: "string",
+              format: "password",
+              example: "password",
+            },
+            newPassword: {
+              type: "string",
+              format: "password",
+              example: "password",
+            },
+          },
+        },
+      },
+    },
+  },
+  responses: {
+    200: {
+      description: "Password changed successfully.",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                description: "Password changed successfully",
+              },
+              user: {
+                $ref: "#/components/schemas/User",
+              },
+            },
+          },
+        },
+      },
+    },
+    404: {
+      description: "User not found.",
     },
   },
 };

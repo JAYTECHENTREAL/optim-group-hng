@@ -1,5 +1,10 @@
 export const adminAddOrganisation = {
-  tags: ['Organisation'],
+  tags: ['Super Admin'],
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
   summary: 'Create a new organization',
   description: 'Create a new organization with super admin privileges.',
   operationId: 'createOrganisationForSuperAdmin',
@@ -24,7 +29,12 @@ export const adminAddOrganisation = {
 };
 
 export const adminUpdateOrgById = {
-  tags: ['Organisation'],
+  tags: ['Super Admin'],
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
   summary: 'Update an organization by ID',
   description:
     'Update organization details by its ID with super admin privileges.',
@@ -65,7 +75,12 @@ export const adminUpdateOrgById = {
 };
 
 export const adminDeleteOrgById = {
-  tags: ['Organisation'],
+  tags: ['Super Admin'],
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
   summary: 'Delete an organization by ID',
   description:
     'Delete an organization from the system by its ID with super admin privileges.',
@@ -93,7 +108,12 @@ export const adminDeleteOrgById = {
 };
 
 export const adminGetOrganisations = {
-  tags: ['Organisation'],
+  tags: ['Super Admin'],
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
   summary: 'Get all organizations',
   description:
     'Retrieve a list of all organizations with super admin privileges.',
@@ -114,7 +134,12 @@ export const adminGetOrganisations = {
 };
 
 export const adminGetOrgById = {
-  tags: ['Organisation'],
+  tags: ['Super Admin'],
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
   summary: 'Get an organization by ID',
   description:
     'Retrieve an organization by its ID with super admin privileges.',

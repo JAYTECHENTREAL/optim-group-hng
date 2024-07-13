@@ -1,6 +1,11 @@
 export const notification = {
   get: {
-    tags: ['user'],
+    tags: ['User'],
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
     summary: 'Get user\'s notifications',
     description: ' user\'s notifications.',
     operationId: 'getUserNotification',
@@ -18,7 +23,12 @@ export const notification = {
 };
 export const inviteLink = {
   get: {
-    tags: ['user'],
+    tags: ['User'],
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
     summary: 'Get user\'s invite link',
     description: 'Retrive a user\'s invite link for invitation | referral.',
     operationId: 'getUserInviteLink',

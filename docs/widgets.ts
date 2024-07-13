@@ -1,5 +1,10 @@
 export const getWidgets = {
   tags: ["Widgets"],
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
   description:
     "A detailed description for fetching random contents published by the user",
   operationId: "getContentsByUser",
@@ -44,6 +49,11 @@ export const getWidgets = {
 
 export const getWidget = {
   tags: ["Widgets"],
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
   description:
     "A detailed description for fetching a single blog published by the user",
   operationId: "getContentsByUser",
@@ -96,6 +106,11 @@ export const getWidget = {
 
 export const search = {
   tags: ["Widgets"],
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
   description: "Search and sort list of blogs published by the user",
   operationId: "searchUsersContents",
   parameters: [
@@ -154,6 +169,11 @@ export const search = {
 
 export const transactionsChart = {
   tags: ["Widgets"],
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
   description: "Display user's transactions chart",
   operationId: "displayTransactionChart",
   parameters: [
@@ -197,6 +217,11 @@ export const transactionsChart = {
 
 export const contentEdit = {
   tags: ["Widgets"],
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
   description: "Edit user's content",
   operationId: "contentEdit",
   parameters: [

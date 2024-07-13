@@ -1,5 +1,10 @@
 export const adminAddUser = {
   tags: ['Super Admin'],
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
   summary: 'Create a new user',
   description: 'Create a new user with super admin privileges.',
   operationId: 'createUserForSuperAdmin',
@@ -25,6 +30,11 @@ export const adminAddUser = {
 
 export const adminUpdateUserById = {
   tags: ['Super Admin'],
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
   summary: 'Update a user by ID',
   description: 'Update user details by their ID.',
   operationId: 'updateUserById',
@@ -65,6 +75,11 @@ export const adminUpdateUserById = {
 
 export const adminDeleteUserById = {
   tags: ['Super Admin'],
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
   summary: 'Delete a user by ID',
   description:
     'Delete a user from the system by their ID with super admin privileges.',
@@ -93,6 +108,11 @@ export const adminDeleteUserById = {
 
 export const adminGetAllUsers = {
   tags: ['Super Admin'],
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
   summary: 'Get all users',
   description:
     'Retrieve a list of all users, optionally filtering by whether they are admins.',
@@ -125,6 +145,11 @@ export const adminGetAllUsers = {
 
 export const adminGetUserById = {
   tags: ['Super Admin'],
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
   summary: 'Get a user by ID',
   description: 'Retrieve a user by their ID with super admin privileges.',
   operationId: 'getUserByIdForSuperAdmin',
