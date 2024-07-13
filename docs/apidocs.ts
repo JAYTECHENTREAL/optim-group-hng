@@ -5,7 +5,8 @@ import { invitesSchema } from "./invites";
 import { organisationSchema } from "./organisations";
 import { transactionSchema } from "./transactions";
 import { userOrganisationSchema } from "./userorganisation";
-import { userSchema, usersTransactions } from "./users";
+import { userSchema } from "./users";
+import { contentEdit, getWidget, getWidgets, search, transactionsChart } from "./widgets";
 
 export const apiDocumentation = {
   openapi: "3.1.0",
@@ -59,10 +60,26 @@ export const apiDocumentation = {
           },
       ],
     },
+    {
+      name: "Widgets",
+      description: "Everything about widgets",
+    },
   ],
   paths: {
-    user: {
-      get: usersTransactions,
+    'user/{user_id}/dashboard/blogs': {
+      get: getWidgets,
+    },
+    'user/{user_id}/dashboard/{blogs}/{blog_id}': {
+      get: getWidget,
+    },
+    "user/{user_id}/dashboard?search='dftor'&order='asc'": {
+      get:search,
+    },
+    "user/{user_id}/dashboard/transactions/chart": {
+      get: transactionsChart,
+    },
+    "user/{user_id}/dashboard/{random_data}/{random_data}/edit": {
+      put: contentEdit,
     }
   },
   components: {

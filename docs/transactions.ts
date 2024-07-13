@@ -19,6 +19,7 @@ export const transactionSchema = {
       reference_id: {
         type: "string",
         format: "description",
+        example: "ascegdfu45904Xuco"
       },
       created_at: {
         type: "string",

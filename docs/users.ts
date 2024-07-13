@@ -41,21 +41,3 @@ export const userSchema = {
     },
   },
 };
-
-export const usersTransactions = {
-  tags: ['user'],
-  summary: "Gets a user by ID",
-  description:
-    "A detailed description of the operation.Use markdown for rich text representation, such as **bold**, *italic*, and [links](https://swagger.io)",
-  operationId: "getUserById",
-  parameters: {
-    name: "id",
-    in: "path",
-    description: "User ID",
-    required: true,
-    schema: {
-      type: "integer",
-      format: "int64",
-    },
-  },
-};

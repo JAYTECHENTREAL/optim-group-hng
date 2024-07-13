@@ -19,12 +19,12 @@
       content: {
         type: "string",
         format: "content",
-        example: "Welcome to our organisation",
+        example: "Welcome to this introductory class on...",
       },
       thumbnail: {
         type: "string",
         format: "content",
-        example: "Welcome to our organisation",
+        example: "https://.....",
       },
       created_at: {
         type: "string",
