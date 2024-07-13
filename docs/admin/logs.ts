@@ -19,7 +19,7 @@ export const adminGetActivityLogs = {
 };
 
 export const adminGetTransactionRecords = {
-  tags: ['Super Admin'],
+  tags: ['Transactions'],
   summary: 'Get transaction records',
   description: 'Retrieve a list of transaction records.',
   operationId: 'getTransactionRecords',

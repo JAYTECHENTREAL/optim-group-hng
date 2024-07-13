@@ -27,7 +27,7 @@ export const inviteLink = {
         description: 'Get User\'s Invite link successfully.',
         content: {
           'application/json': {
-            schema: { $ref: '#/components/schemas/Invites' },
+            schema: { $ref: '#/components/schemas/InvitesLink' },
           },
         },
       },
