@@ -1,3 +1,14 @@
+# Optim Group API & Database Design Documentation
+
+## Overview
+This is documentation was created to fit the boilerplate required for implementing certain features in projects following the NodeJS project file structure.
+
+The Link to our API's Documentation can be found at: https://app.swaggerhub.com/apis/OlanrewajuDavid/Optim-Group-API-Documentation/1.0.0-oas3.1
+
+And below is an image depicting our database design architecture
+
+![Untitled (1)](https://github.com/user-attachments/assets/9f96b6cc-e283-4b70-93d9-c3656175f0f3)
+
 # [App Name] Integration Documentation
 
 ## Overview
