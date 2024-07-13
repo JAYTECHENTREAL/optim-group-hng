@@ -30,19 +30,19 @@ export const apiDocumentation = {
   ],
   tags: [
     {
-      name: "user",
+      name: "User",
       description: "Everything about your Users",
     },
     {
-      name: "organisation",
+      name: "Organisation",
       description: "Access to user's organisation(s)",
     },
     {
-      name: "emailTemplates",
+      name: "EmailTemplates",
       description: "Email template messaging",
     },
     {
-      name: "transactions",
+      name: "Transactions",
       description: "Everything about users transactions",
       externalDocs: [
         {
