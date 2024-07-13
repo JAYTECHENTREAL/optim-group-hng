@@ -1,8 +1,28 @@
-import { blogSchema } from "./blog";
+import { activityLogSchema } from "./activityLogSchema";
+import { adminGetActivityLogs, adminGetTransactionRecords } from "./admin/logs";
+import {
+  adminAddOrganisation,
+  adminDeleteOrgById,
+  adminGetOrganisations,
+  adminGetOrgById,
+  adminUpdateOrgById,
+} from "./admin/organisation";
+import {
+  adminAddUser,
+  adminDeleteUserById,
+  adminGetAllUsers,
+  adminGetUserById,
+  adminUpdateUserById,
+} from "./admin/user";
+import { blogSchema } from "./Blog";
+import { sendEmail, getEmailTemplates, emailTemplates } from "./EmailTemplate";
 import { commentSchema } from "./comment";
-import { emailTTemplateSchema } from "./emailTemplates";
-import { invitesSchema } from "./invites";
+import { myinvitesSchema, invitesSchema } from "./invites";
+import { contactUs, landingPages } from "./landingPage";
 import { organisationSchema } from "./organisations";
+import { profileSettings } from "./profileSettings";
+import { inviteLink, notification } from "./Notifications";
+import { settings } from "./settings";
 import { transactionSchema } from "./transactions";
 import { userOrganisationSchema } from "./userorganisation";
 import { userSchema } from "./users";
@@ -31,15 +51,11 @@ export const apiDocumentation = {
   ],
   tags: [
     {
-      name: "User",
-      description: "Everything about your Users",
-    },
-    {
       name: "Organisation",
       description: "Access to user's organisation(s)",
     },
     {
-      name: "EmailTemplates",
+      name: "Email Messaging",
       description: "Email template messaging",
     },
     {
@@ -55,9 +71,9 @@ export const apiDocumentation = {
           url: "https://docs.stripe.com/checkout/quickstart",
         },
         {
-            description: "LemonSqueezy Payment",
-            url: "https://www.lemonsqueezy.com/ecommerce/payments",
-          },
+          description: "LemonSqueezy Payment",
+          url: "https://www.lemonsqueezy.com/ecommerce/payments",
+        },
       ],
     },
     {
@@ -81,24 +97,71 @@ export const apiDocumentation = {
     "user/{user_id}/dashboard/{random_data}/{random_data}/edit": {
       put: contentEdit,
     }
+    { name: "Super Admin", description: "Everything about admin actions" },
+    { name: "Settings", description: "Application settings" },
+    { name: "Profile", description: "User profile settings" },
+    { name: "Landing Page", description: "Static pages" },
+    { name: "Contact", description: "Contact Us" },
+  ],
+  paths: {
+    user: {
+      get: usersTransactions,
+    },
+    "/admin/users": {
+      get: adminGetAllUsers,
+      post: adminAddUser,
+    },
+    "/admin/users/{id}": {
+      get: adminGetUserById,
+      put: adminUpdateUserById,
+      delete: adminDeleteUserById,
+    },
+    "/admin/organisations": {
+      get: adminGetOrganisations,
+      post: adminAddOrganisation,
+    },
+    "/admin/organisations/{id}": {
+      get: adminGetOrgById,
+      put: adminUpdateOrgById,
+      delete: adminDeleteOrgById,
+    },
+    "/admin/activity-logs": {
+      get: adminGetActivityLogs,
+    },
+    "/admin/transactions": {
+      get: adminGetTransactionRecords,
+    },
+    "/admin/emailtemplate": emailTemplates,
+    "/admin/emailtemplate/{id}": getEmailTemplates,
+    "/admin/sendemail/": sendEmail,
+    "/settings": settings,
+    "/profile": profileSettings,
+    "/notifications": notification,
+    "/lang": language,
+    "/getInviteLink": inviteLink,
+    "/landing/privacy-policy": landingPages.privacyPolicy,
+    "/landing/about-us": landingPages.aboutUs,
+    "/contact": contactUs,
   },
   components: {
     securitySchemes: {
       bearerAuth: {
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT',
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT",
       },
     },
     schemas: {
       User: userSchema,
+      Notification: notificationSchema,
       Organisation: organisationSchema,
       UserOrganisation: userOrganisationSchema,
-      EmailTemplates: emailTTemplateSchema,
       Transactions: transactionSchema,
       Blog: blogSchema,
       Comment: commentSchema,
       Invites: invitesSchema,
+      InvitesLink: myinvitesSchema,
+      ActivityLog: activityLogSchema,
     },
   },
 };

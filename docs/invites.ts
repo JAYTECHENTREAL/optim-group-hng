@@ -18,3 +18,13 @@ export const invitesSchema = {
     },
   },
 };
+export const myinvitesSchema = {
+  type: "object",
+  properties: {
+    referral_id: {
+      type: "string",
+      format: "byte",
+      example: "U3BlYWtlYXN5IG1ha2VzIHdvcmtpbmcgd2l0aCBBUElzIGZ1biE=",
+    },
+  },
+};
