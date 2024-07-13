@@ -25,8 +25,19 @@ import { inviteLink, notification } from "./Notifications";
 import { settings } from "./settings";
 import { transactionSchema } from "./transactions";
 import { userOrganisationSchema } from "./userorganisation";
-import { userSchema } from "./users";
-import { contentEdit, getWidget, getWidgets, search, transactionsChart } from "./widgets";
+import {
+  language,
+  notificationSchema,
+  userSchema,
+  usersTransactions,
+} from "./users";
+import {
+  contentEdit,
+  getWidget,
+  getWidgets,
+  search,
+  transactionsChart,
+} from "./widgets";
 
 export const apiDocumentation = {
   openapi: "3.1.0",
@@ -80,23 +91,6 @@ export const apiDocumentation = {
       name: "Widgets",
       description: "Everything about widgets",
     },
-  ],
-  paths: {
-    'user/{user_id}/dashboard/blogs': {
-      get: getWidgets,
-    },
-    'user/{user_id}/dashboard/{blogs}/{blog_id}': {
-      get: getWidget,
-    },
-    "user/{user_id}/dashboard?search='dftor'&order='asc'": {
-      get:search,
-    },
-    "user/{user_id}/dashboard/transactions/chart": {
-      get: transactionsChart,
-    },
-    "user/{user_id}/dashboard/{random_data}/{random_data}/edit": {
-      put: contentEdit,
-    }
     { name: "Super Admin", description: "Everything about admin actions" },
     { name: "Settings", description: "Application settings" },
     { name: "Profile", description: "User profile settings" },
@@ -104,6 +98,21 @@ export const apiDocumentation = {
     { name: "Contact", description: "Contact Us" },
   ],
   paths: {
+    "user/{user_id}/dashboard/blogs": {
+      get: getWidgets,
+    },
+    "user/{user_id}/dashboard/{blogs}/{blog_id}": {
+      get: getWidget,
+    },
+    "user/{user_id}/dashboard?search='dftor'&order='asc'": {
+      get: search,
+    },
+    "user/{user_id}/dashboard/transactions/chart": {
+      get: transactionsChart,
+    },
+    "user/{user_id}/dashboard/{random_data}/{random_data}/edit": {
+      put: contentEdit,
+    },
     user: {
       get: usersTransactions,
     },
