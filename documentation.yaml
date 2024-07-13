@@ -1,0 +1,2240 @@
+openapi: "3.1.0"
+info:
+  version: "1.0.0"
+  title: "HNG 11 (REST API - Documentation)"
+  description: "Description of Optim Group's API here in Node.js Template"
+  license:
+    name: "Apache 2.0"
+    url: "https://www.apache.org/licenses/LICENSE-2.0.html"
+servers:
+  - url: "http://localhost:4500/"
+    description: "Local Server"
+  - url: "#"
+    description: "Production Server"
+tags:
+  - name: "Authentication"
+    description: "Authenticate users"
+  - name: "User"
+    description: "Everything about the user"
+  - name: "Email Messaging"
+    description: "Email template messaging"
+  - name: "Transactions"
+    description: "Everything about users transactions"
+    externalDocs:
+      - description: "Flutterwave Payment"
+        url: "https://developer.flutterwave.com/docs/collecting-payments/overview/"
+      - description: "Stripe Payment"
+        url: "https://docs.stripe.com/checkout/quickstart"
+      - description: "LemonSqueezy Payment"
+        url: "https://www.lemonsqueezy.com/ecommerce/payments"
+  - name: "Widgets"
+    description: "Everything about widgets"
+  - name: "Super Admin"
+    description: "Everything about admin actions"
+  - name: "Settings"
+    description: "Application settings"
+  - name: "Profile"
+    description: "User profile settings"
+  - name: "Landing Page"
+    description: "Static pages"
+  - name: "Contact"
+    description: "Contact Us"
+paths:
+  /auth/signup:
+    post:
+      tags:
+        - "Authentication"
+      security:
+        - bearerAuth: []
+      summary: "Create a new user"
+      description: "Create a new user."
+      operationId: "createUser"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        201:
+          description: "User created successfully."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+  /auth/login:
+    post:
+      tags:
+        - "Authentication"
+      summary: "Login with email and password"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                email:
+                  type: "string"
+                  format: "email"
+                  example: "user@example.com"
+                password:
+                  type: "string"
+                  format: "password"
+                  example: "strongpassword"
+      responses:
+        200:
+          description: "Successful login"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  token:
+                    type: "string"
+                    description: "JWT token for authenticated requests"
+                  user:
+                    $ref: "#/components/schemas/User"
+        401:
+          description: "Unauthorized"
+  /auth/social:
+    post:
+      tags:
+        - "Authentication"
+      summary: "Social login"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                provider:
+                  type: "string"
+                  enum:
+                    - "google"
+                    - "facebook"
+                    - "twitter"
+                  example: "google"
+                token:
+                  type: "string"
+                  description: "OAuth token from the social provider"
+                  example: "ABCDEFGH12345678"
+      responses:
+        200:
+          description: "Successful login"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  token:
+                    type: "string"
+                    description: "JWT token for authenticated requests"
+                  user:
+                    $ref: "#/components/schemas/User"
+        401:
+          description: "Unauthorized"
+  /auth/magic-link:
+    post:
+      tags:
+        - "Authentication"
+      summary: "Request magic link"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                email:
+                  type: "string"
+                  format: "email"
+                  example: "user@example.com"
+      responses:
+        200:
+          description: "Magic link sent"
+        400:
+          description: "Bad request"
+  /auth/magic-link/verify:
+    post:
+      tags:
+        - "Authentication"
+      summary: "Verify magic link"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                token:
+                  type: "string"
+                  description: "Token from the magic link"
+                  example: "ABCDEFGH12345678"
+      responses:
+        200:
+          description: "Successful verification"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  token:
+                    type: "string"
+                    description: "JWT token for authenticated requests"
+                  user:
+                    $ref: "#/components/schemas/User"
+        401:
+          description: "Unauthorized"
+  /api/v1/users/{id}:
+    get:
+      tags:
+        - "User"
+      security:
+        - bearerAuth: []
+      summary: "Get a user by ID"
+      description: "Retrieve a user by their ID with super admin privileges."
+      operationId: "getUserByIdForSuperAdmin"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          description: "User ID"
+          schema:
+            type: "integer"
+            format: "int64"
+      responses:
+        200:
+          description: "User details."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        404:
+          description: "User not found."
+    put:
+      tags:
+        - "User"
+      security:
+        - bearerAuth: []
+      summary: "Update a user by ID"
+      description: "Update user details by their ID."
+      operationId: "updateUserById"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          description: "User ID"
+          schema:
+            type: "integer"
+            format: "int64"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        200:
+          description: "User updated successfully."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        404:
+          description: "User not found."
+    delete:
+      tags:
+        - "User"
+      security:
+        - bearerAuth: []
+      summary: "Delete a user by ID"
+      description: "Delete a user from the system by their ID with super admin privileges."
+      operationId: "deleteUserByIdForSuperAdmin"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          description: "User ID"
+          schema:
+            type: "integer"
+            format: "int64"
+      responses:
+        204:
+          description: "User deleted successfully."
+        404:
+          description: "User not found."
+  /api/v1/users/{id}/change-password:
+    put:
+      tags:
+        - "User"
+      security:
+        - bearerAuth: []
+      summary: "Change user password by ID"
+      description: "Update user password by their ID."
+      operationId: "updateUserPasswordById"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          description: "User ID"
+          schema:
+            type: "integer"
+            format: "int64"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                oldPassword:
+                  type: "string"
+                  format: "password"
+                  example: "password"
+                newPassword:
+                  type: "string"
+                  format: "password"
+                  example: "password"
+      responses:
+        200:
+          description: "Password changed successfully."
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "Password changed successfully"
+                  user:
+                    $ref: "#/components/schemas/User"
+        404:
+          description: "User not found."
+  /api/v1/users/organisations:
+    get:
+      tags:
+        - "User"
+      security:
+        - bearerAuth: []
+      summary: "Get all organizations"
+      description: "Retrieve a list of all organizations with super admin privileges."
+      operationId: "getAllOrganisationsForSuperAdmin"
+      responses:
+        200:
+          description: "A list of organizations."
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/Organisation"
+    post:
+      tags:
+        - "User"
+      security:
+        - bearerAuth: []
+      summary: "Create a new organization"
+      description: "Create a new organization with super admin privileges."
+      operationId: "createOrganisationForSuperAdmin"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Organisation"
+      responses:
+        201:
+          description: "Organization created successfully."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Organisation"
+  /api/v1/users/organisations/{id}:
+    get:
+      tags:
+        - "User"
+      security:
+        - bearerAuth: []
+      summary: "Get an organization by ID"
+      description: "Retrieve an organization by its ID with super admin privileges."
+      operationId: "getOrganisationByIdForSuperAdmin"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          description: "Organization ID"
+          schema:
+            type: "integer"
+            format: "int64"
+      responses:
+        200:
+          description: "Organization details."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Organisation"
+        404:
+          description: "Organization not found."
+    put:
+      tags:
+        - "User"
+      security:
+        - bearerAuth: []
+      summary: "Update an organization by ID"
+      description: "Update organization details by its ID with super admin privileges."
+      operationId: "updateOrganisationByIdForSuperAdmin"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          description: "Organization ID"
+          schema:
+            type: "integer"
+            format: "int64"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Organisation"
+      responses:
+        200:
+          description: "Organization updated successfully."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Organisation"
+        404:
+          description: "Organization not found."
+    delete:
+      tags:
+        - "User"
+      security:
+        - bearerAuth: []
+      summary: "Delete an organization by ID"
+      description: "Delete an organization from the system by its ID with super admin privileges."
+      operationId: "deleteOrganisationByIdForSuperAdmin"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          description: "Organization ID"
+          schema:
+            type: "integer"
+            format: "int64"
+      responses:
+        204:
+          description: "Organization deleted successfully."
+        404:
+          description: "Organization not found."
+  /api/v1/user/{user_id}/dashboard/blogs:
+    get:
+      tags:
+        - "Widgets"
+      security:
+        - bearerAuth: []
+      description: "A detailed description for fetching random contents published by the user"
+      operationId: "getContentsByUser"
+      parameters:
+        - name: "user_id"
+          in: "path"
+          required: true
+          schema:
+            type: "integer"
+            minimum: 1
+          description: "The user's ID"
+      responses:
+        200:
+          description: "Contents fetched successfully"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  - $ref: "#/components/schemas/Blog"
+        400:
+          description: "User ID must be an integer"
+        401:
+          description: "Authorization token is missing or invalid"
+        404:
+          description: "User with the specified ID does not exist"
+        500:
+          description: "Internal Server Error"
+  /api/v1/user/{user_id}/dashboard/{blogs}/{blog_id}:
+    get:
+      tags:
+        - "Widgets"
+      security:
+        - bearerAuth: []
+      description: "A detailed description for fetching a single blog published by the user"
+      operationId: "getContentsByUser"
+      parameters:
+        - name: "user_id"
+          in: "path"
+          required: true
+          schema:
+            type: "integer"
+            minimum: 1
+          description: "The user's ID"
+        - name: "blog_id"
+          in: "path"
+          required: true
+          schema:
+            type: "integer"
+            minimum: 1
+          description: "The blog's ID"
+      responses:
+        200:
+          description: "Random data fetched successfully"
+          content:
+            application/json:
+              type: "object"
+              schema:
+                $ref: "#/components/schemas/Blog"
+        400:
+          description: "User or random data ID and must be an integer"
+        401:
+          description: "Authorization token is missing or invalid"
+        404:
+          description: "User or random data with the specified ID does not exist"
+        500:
+          description: "Internal Server Error"
+  /api/v1/user/{user_id}/dashboard?search='dftor'&order='asc':
+    get:
+      tags:
+        - "Widgets"
+      security:
+        - bearerAuth: []
+      description: "Search and sort list of blogs published by the user"
+      operationId: "searchUsersContents"
+      parameters:
+        - name: "search"
+          in: "query"
+          schema:
+            type: "string"
+          description: "Search query for filtering data"
+        - name: "order"
+          in: "query"
+          schema:
+            type: "string"
+            enum:
+              - "asc"
+              - "desc"
+            default: "desc"
+          description: "Sort order for data"
+      responses:
+        200:
+          description: "Content fetched successfully"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  oneOf:
+                    - $ref: "#/components/schemas/Blog"
+                    - $ref: "#/components/schemas/Transactions"
+                    - $ref: "#/components/schemas/Organisation"
+                    - $ref: "#/components/schemas/Invites"
+        400:
+          description: "User ID and must be an integer"
+        401:
+          description: "Authorization token is missing or invalid"
+        404:
+          description: "User with the specified ID does not exist"
+        500:
+          description: "Internal Server Error"
+  /api/v1/user/{user_id}/dashboard/transactions/chart:
+    get:
+      tags:
+        - "Widgets"
+      security:
+        - bearerAuth: []
+      description: "Display user's transactions chart"
+      operationId: "displayTransactionChart"
+      parameters:
+        - name: "user_id"
+          in: "path"
+          required: true
+          schema:
+            type: "integer"
+            minimum: 1
+          description: "The user's ID"
+      responses:
+        200:
+          description: "Transactions detail fetched successfully"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/Transactions"
+        400:
+          description: "User ID and must be an integer"
+        401:
+          description: "Authorization token is missing or invalid"
+        404:
+          description: "User with the specified ID does not exist"
+        500:
+          description: "Internal Server Error"
+  /api/v1/user/{user_id}/dashboard/{random_data}/{random_data}/edit:
+    put:
+      tags:
+        - "Widgets"
+      security:
+        - bearerAuth: []
+      description: "Edit user's content"
+      operationId: "contentEdit"
+      parameters:
+        - name: "user_id"
+          in: "path"
+          required: true
+          schema:
+            type: "integer"
+            minimum: 1
+          description: "The user's ID"
+        - name: "random_data_id"
+          in: "path"
+          required: true
+          schema:
+            type: "integer"
+            minimum: 1
+          description: "The random data ID"
+      responses:
+        200:
+          description: "Random data edited successfully"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    format: "text"
+                    example: "Data update successful"
+        400:
+          description: "User or Blog ID and must be an integer"
+        401:
+          description: "Authorization token is missing or invalid"
+        404:
+          description: "User or Blog with the specified ID does not exist"
+        500:
+          description: "Internal Server Error"
+  /api/v1/admin/getUsers:
+    get:
+      tags:
+        - "Super Admin"
+      security:
+        - bearerAuth: []
+      summary: "Get all users"
+      description: "Retrieve a list of all users, optionally filtering by whether they are admins."
+      operationId: "getAllUsers"
+      parameters:
+        - name: "is_admin"
+          in: "query"
+          description: "Filter users by admin status"
+          required: false
+          schema:
+            type: "boolean"
+      responses:
+        200:
+          description: "A list of users."
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/User"
+    post:
+      tags:
+        - "Super Admin"
+      security:
+        - bearerAuth: []
+      summary: "Create a new user"
+      description: "Create a new user with super admin privileges."
+      operationId: "createUserForSuperAdmin"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        201:
+          description: "User created successfully."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+  /api/v1/admin/getUsers/{id}:
+    get:
+      tags:
+        - "Super Admin"
+      security:
+        - bearerAuth: []
+      summary: "Get a user by ID"
+      description: "Retrieve a user by their ID with super admin privileges."
+      operationId: "getUserByIdForSuperAdmin"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          description: "User ID"
+          schema:
+            type: "integer"
+            format: "int64"
+      responses:
+        200:
+          description: "User details."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        404:
+          description: "User not found."
+    put:
+      tags:
+        - "Super Admin"
+      security:
+        - bearerAuth: []
+      summary: "Update a user by ID"
+      description: "Update user details by their ID."
+      operationId: "updateUserById"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          description: "User ID"
+          schema:
+            type: "integer"
+            format: "int64"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        200:
+          description: "User updated successfully."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        404:
+          description: "User not found."
+    delete:
+      tags:
+        - "Super Admin"
+      security:
+        - bearerAuth: []
+      summary: "Delete a user by ID"
+      description: "Delete a user from the system by their ID with super admin privileges."
+      operationId: "deleteUserByIdForSuperAdmin"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          description: "User ID"
+          schema:
+            type: "integer"
+            format: "int64"
+      responses:
+        204:
+          description: "User deleted successfully."
+        404:
+          description: "User not found."
+  /api/v1/admin/organisations:
+    get:
+      tags:
+        - "Super Admin"
+      security:
+        - bearerAuth: []
+      summary: "Get all organizations"
+      description: "Retrieve a list of all organizations with super admin privileges."
+      operationId: "getAllOrganisationsForSuperAdmin"
+      responses:
+        200:
+          description: "A list of organizations."
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/Organisation"
+    post:
+      tags:
+        - "Super Admin"
+      security:
+        - bearerAuth: []
+      summary: "Create a new organization"
+      description: "Create a new organization with super admin privileges."
+      operationId: "createOrganisationForSuperAdmin"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Organisation"
+      responses:
+        201:
+          description: "Organization created successfully."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Organisation"
+  /api/v1/admin/organisations/{id}:
+    get:
+      tags:
+        - "Super Admin"
+      security:
+        - bearerAuth: []
+      summary: "Get an organization by ID"
+      description: "Retrieve an organization by its ID with super admin privileges."
+      operationId: "getOrganisationByIdForSuperAdmin"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          description: "Organization ID"
+          schema:
+            type: "integer"
+            format: "int64"
+      responses:
+        200:
+          description: "Organization details."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Organisation"
+        404:
+          description: "Organization not found."
+    put:
+      tags:
+        - "Super Admin"
+      security:
+        - bearerAuth: []
+      summary: "Update an organization by ID"
+      description: "Update organization details by its ID with super admin privileges."
+      operationId: "updateOrganisationByIdForSuperAdmin"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          description: "Organization ID"
+          schema:
+            type: "integer"
+            format: "int64"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Organisation"
+      responses:
+        200:
+          description: "Organization updated successfully."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Organisation"
+        404:
+          description: "Organization not found."
+    delete:
+      tags:
+        - "Super Admin"
+      security:
+        - bearerAuth: []
+      summary: "Delete an organization by ID"
+      description: "Delete an organization from the system by its ID with super admin privileges."
+      operationId: "deleteOrganisationByIdForSuperAdmin"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          description: "Organization ID"
+          schema:
+            type: "integer"
+            format: "int64"
+      responses:
+        204:
+          description: "Organization deleted successfully."
+        404:
+          description: "Organization not found."
+  /api/v1/admin/activity-logs:
+    get:
+      tags:
+        - "Super Admin"
+      security:
+        - bearerAuth: []
+      summary: "Get activity logs"
+      description: "Retrieve a list of activity logs."
+      operationId: "getActivityLogs"
+      responses:
+        200:
+          description: "A list of activity logs."
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/ActivityLog"
+  /api/v1/admin/transactions:
+    get:
+      tags:
+        - "Transactions"
+      security:
+        - bearerAuth: []
+      summary: "Get transaction records"
+      description: "Retrieve a list of transaction records."
+      operationId: "getTransactionRecords"
+      responses:
+        200:
+          description: "A list of transaction records."
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/Transactions"
+  /api/v1/admin/emailtemplate:
+    post:
+      tags:
+        - "Email Messaging"
+      summary: "Create a new email template"
+      description: "Create a new template with super admin privileges."
+      operationId: "createEmailTemplate"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                title:
+                  type: "string"
+                  format: "title"
+                  example: "Welome"
+                description:
+                  type: "string"
+                  format: "details"
+                  example: "Welcome to our organisation"
+                updated_at:
+                  type: "string"
+                  format: "date-time"
+                  example: "2022-10-12T07:20:50.52Z"
+      responses:
+        201:
+          description: "Email Template created successfully."
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    example: "successful"
+  /api/v1/admin/emailtemplate/{id}:
+    get:
+      tags:
+        - "Email Messaging"
+      summary: "Get an email template by ID"
+      description: "Retrieve an email template for messaging using its ID with super admin privileges."
+      operationId: "getEmailTemplate"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          description: "Template ID"
+          schema:
+            type: "string"
+      responses:
+        200:
+          description: "Email template."
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  title:
+                    type: "string"
+                    format: "title"
+                    example: "Welome"
+                  description:
+                    type: "string"
+                    format: "details"
+                    example: "Welcome to our organisation"
+        404:
+          description: "Email template not found."
+  /api/v1/admin/sendemail/:
+    post:
+      tags:
+        - "Email Messaging"
+      summary: "Send a new email to users"
+      description: "Send a new with super admin privileges to users."
+      operationId: "sendEmail"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                user_id:
+                  type: "string"
+                  example: "98a7sfd7a, 8a9798a70, 8s798df7s0"
+                content:
+                  type: "string"
+                  format: "details"
+                  example: "<html>....contents goes here</html>"
+                created_at:
+                  type: "string"
+                  format: "date-time"
+                  example: "2022-10-12T07:20:50.52Z"
+      responses:
+        201:
+          description: "Email Template created successfully."
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    example: "successful"
+  /payments/stripe/payment:
+    post:
+      tags:
+        - "Transactions"
+      summary: "Create Stripe checkout session"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                amount:
+                  type: "number"
+                  example: 1000
+                currency:
+                  type: "string"
+                  example: "usd"
+                description:
+                  type: "string"
+                  example: "Payment for order #1234"
+              required:
+                - "amount"
+                - "currency"
+      responses:
+        200:
+          description: "Stripe checkout session created"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  sessionId:
+                    type: "string"
+                    description: "Stripe session ID"
+                    example: "cs_test_a1B2c3D4e5F6g7H8i9J0"
+        400:
+          description: "Bad request"
+  /payments/flutterwave/payment:
+    post:
+      tags:
+        - "Transactions"
+      summary: "Initiate Flutterwave payment"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                amount:
+                  type: "number"
+                  example: 1000
+                currency:
+                  type: "string"
+                  example: "NGN"
+                email:
+                  type: "string"
+                  example: "user@example.com"
+                tx_ref:
+                  type: "string"
+                  example: "tx-12345678"
+              required:
+                - "amount"
+                - "currency"
+                - "email"
+                - "tx_ref"
+      responses:
+        200:
+          description: "Flutterwave payment initiated"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  status:
+                    type: "string"
+                    example: "success"
+                  link:
+                    type: "string"
+                    description: "Payment link"
+                    example: "https://checkout.flutterwave.com/v3/hosted/pay/abcdefgh"
+        400:
+          description: "Bad request"
+  /payments/lemonsqueezy/payment:
+    post:
+      tags:
+        - "Transactions"
+      summary: "Create LemonSqueezy checkout session"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                amount:
+                  type: "number"
+                  example: 1000
+                currency:
+                  type: "string"
+                  example: "usd"
+                description:
+                  type: "string"
+                  example: "Payment for product"
+              required:
+                - "amount"
+                - "currency"
+      responses:
+        200:
+          description: "LemonSqueezy checkout session created"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  checkoutUrl:
+                    type: "string"
+                    description: "LemonSqueezy checkout URL"
+                    example: "https://checkout.lemonsqueezy.com/pay/abcdefgh"
+        400:
+          description: "Bad request"
+  /api/v1/settings:
+    get:
+      tags:
+        - "Settings"
+      summary: "Get settings"
+      description: "Retrieve application settings."
+      operationId: "getSettings"
+      responses:
+        200:
+          description: "Settings retrieved successfully."
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  setting1:
+                    type: "string"
+                  setting2:
+                    type: "string"
+    put:
+      tags:
+        - "Settings"
+      summary: "Update settings"
+      description: "Update application settings."
+      operationId: "updateSettings"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                setting1:
+                  type: "string"
+                setting2:
+                  type: "string"
+      responses:
+        200:
+          description: "Settings updated successfully."
+  /api/v1/profile:
+    get:
+      tags:
+        - "Profile"
+      security:
+        - bearerAuth: []
+      summary: "Get profile settings"
+      description: "Retrieve user profile settings."
+      operationId: "getProfileSettings"
+      responses:
+        200:
+          description: "Profile settings retrieved successfully."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+    put:
+      tags:
+        - "Profile"
+      security:
+        - bearerAuth: []
+      summary: "Update profile settings"
+      description: "Update user profile settings."
+      operationId: "updateProfileSettings"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        200:
+          description: "Profile settings updated successfully."
+  /api/v1/notifications:
+    get:
+      tags:
+        - "User"
+      security:
+        - bearerAuth: []
+      summary: "Get user's notifications"
+      description: " user's notifications."
+      operationId: "getUserNotification"
+      responses:
+        200:
+          description: "User's Notifications retrieved successfully."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Notification"
+  /api/v1/lang:
+    get:
+      tags:
+        - "Settings"
+      summary: "Get language & region"
+      description: "Retrieve language and region's settings."
+      operationId: "getLanReg"
+      parameters:
+        - name: "type"
+          in: "path"
+          required: false
+          description: "Language or Region"
+          schema:
+            type: "string"
+      responses:
+        200:
+          description: "Successful."
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  language:
+                    type: "string"
+                    example: "en-US"
+                  region:
+                    type: "string"
+                    example: "New York"
+    put:
+      tags:
+        - "Settings"
+      summary: "Set language & region"
+      description: "Update language and region's settings."
+      operationId: "setLanReg"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                type:
+                  type: "string"
+                  format: "title"
+                  example: "lang | region"
+                content:
+                  type: "string"
+                  format: "details"
+                  example: "en-US"
+      responses:
+        201:
+          description: "Settings updated successfully."
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    example: "successful"
+  /api/v1/getInviteLink:
+    get:
+      tags:
+        - "User"
+      security:
+        - bearerAuth: []
+      summary: "Get user's invite link"
+      description: "Retrive a user's invite link for invitation | referral."
+      operationId: "getUserInviteLink"
+      responses:
+        200:
+          description: "Get User's Invite link successfully."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvitesLink"
+  /api/v1/landing/privacy-policy:
+    get:
+      tags:
+        - "Landing Page"
+      summary: "Get Privacy Policy"
+      description: "Retrieve the Privacy Policy page content."
+      operationId: "getPrivacyPolicy"
+      responses:
+        200:
+          description: "Privacy Policy content retrieved successfully."
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  content:
+                    type: "string"
+  /api/v1/landing/about-us:
+    get:
+      tags:
+        - "Landing Page"
+      summary: "Get About Us"
+      description: "Retrieve the About Us page content."
+      operationId: "getAboutUs"
+      responses:
+        200:
+          description: "About Us content retrieved successfully."
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  content:
+                    type: "string"
+  /api/v1/contact:
+    post:
+      tags:
+        - "Contact"
+      summary: "Submit Contact Form"
+      description: "Submit a contact form."
+      operationId: "submitContactForm"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                name:
+                  type: "string"
+                email:
+                  type: "string"
+                message:
+                  type: "string"
+              required:
+                - "name"
+                - "email"
+                - "message"
+      responses:
+        200:
+          description: "Contact form submitted successfully."
+  /api/v1/consent:
+    post:
+      summary: "Stores user's decision on cookies storage"
+      tags:
+        - "Cookies"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                consent:
+                  type: "string"
+      responses:
+        201:
+          description: "User consent is saved"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  status:
+                    type: "string"
+                  message:
+                    type: "string"
+                  data:
+                    type: "object"
+                    properties:
+                      userId:
+                        type: "string"
+                      consent:
+                        type: "string"
+                      categories:
+                        type: "string"
+        422:
+          description: "Error"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      status:
+                        type: "string"
+                      message:
+                        type: "string"
+        500:
+          description: "Error"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      status:
+                        type: "string"
+                      message:
+                        type: "string"
+  /api/v1/consent/{id}:
+    get:
+      summary: "Fetches user's status on cookies"
+      tags:
+        - "Cookies"
+      parameters:
+        - in: "path"
+          name: "id"
+          required: true
+      responses:
+        201:
+          description: "User consent is saved"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  status:
+                    type: "string"
+                  message:
+                    type: "string"
+                  data:
+                    type: "object"
+                    properties:
+                      userId:
+                        type: "string"
+                      consent:
+                        type: "string"
+                      categories:
+                        type: "string"
+        404:
+          description: "Not found"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      status:
+                        type: "string"
+                      message:
+                        type: "string"
+        500:
+          description: "Error"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      status:
+                        type: "string"
+                      message:
+                        type: "string"
+  /api/v1/consents/{id}:
+    patch:
+      summary: "Updates user's status on cookies"
+      tags:
+        - "Cookies"
+      parameters:
+        - in: "path"
+          name: "id"
+          required: true
+      responses:
+        200:
+          description: "User consent is updated"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  status:
+                    type: "string"
+                  message:
+                    type: "string"
+                  data:
+                    type: "object"
+                    properties:
+                      userId:
+                        type: "string"
+                      consent:
+                        type: "string"
+                      categories:
+                        type: "string"
+        404:
+          description: "Not found"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      status:
+                        type: "string"
+                      message:
+                        type: "string"
+        500:
+          description: "Error"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      status:
+                        type: "string"
+                      message:
+                        type: "string"
+  /api/v1/invite/{id}:
+    get:
+      summary: "Fetches invite page"
+      tags:
+        - "Invite"
+      parameters:
+        - in: "path"
+          name: "id"
+          required: true
+      responses:
+        200:
+          description: "Fetch invite page"
+          content:
+            application/json: {}
+        404:
+          description: "Not found"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      status:
+                        type: "string"
+                      message:
+                        type: "string"
+        500:
+          description: "Error"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      status:
+                        type: "string"
+                      message:
+                        type: "string"
+  /api/v1/dashboard:
+    get:
+      summary: "Fetches content of a dashboard page"
+      tags:
+        - "Dashboard"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: "path"
+          name: "id"
+          required: true
+      responses:
+        200:
+          description: "Fetched dashboard data"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  status:
+                    type: "string"
+                  message:
+                    type: "string"
+                  data:
+                    type: "object"
+        404:
+          description: "Not Found"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      status:
+                        type: "string"
+                      message:
+                        type: "string"
+        500:
+          description: "Error"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      status:
+                        type: "string"
+                      message:
+                        type: "string"
+  /api/v1/widget/{id}:
+    get:
+      summary: "Fetches content of widget on a dashboard page"
+      tags:
+        - "Dashboard"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: "path"
+          name: "id"
+          required: true
+      responses:
+        200:
+          description: "Fetched widget data"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  status:
+                    type: "string"
+                  message:
+                    type: "string"
+                  data:
+                    type: "object"
+        404:
+          description: "Not Found"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      status:
+                        type: "string"
+                      message:
+                        type: "string"
+        500:
+          description: "Error"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      status:
+                        type: "string"
+                      message:
+                        type: "string"
+  /api/v1/waitlist:
+    get:
+      summary: "Fetches list of users on waitlist"
+      tags:
+        - "Waitlist"
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: "Fetched waitlist data"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  status:
+                    type: "string"
+                  message:
+                    type: "string"
+                  data:
+                    type: "object"
+                    properties:
+                      userId:
+                        type: "string"
+                      name:
+                        type: "string"
+                      email:
+                        type: "string"
+        404:
+          description: "Not Found"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      status:
+                        type: "string"
+                      message:
+                        type: "string"
+        500:
+          description: "Error"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      status:
+                        type: "string"
+                      message:
+                        type: "string"
+  /api/v1/waitlists:
+    post:
+      summary: "Add a user to waitlist."
+      tags:
+        - "Waitlist"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                email:
+                  type: "string"
+      responses:
+        201:
+          description: "User added to waitlist"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  status:
+                    type: "string"
+                  message:
+                    type: "string"
+                  data:
+                    type: "object"
+                    properties:
+                      userId:
+                        type: "string"
+                      name:
+                        type: "string"
+                      email:
+                        type: "string"
+        422:
+          description: "Error"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      status:
+                        type: "string"
+                      message:
+                        type: "string"
+        500:
+          description: "Error"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      status:
+                        type: "string"
+                      message:
+                        type: "string"
+  /api/v1/waitlist/{id}:
+    get:
+      summary: "Fetches user on waitlist using id"
+      tags:
+        - "Waitlist"
+      parameters:
+        - in: "path"
+          name: "id"
+          required: true
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: "Fetched waitlist data"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  status:
+                    type: "string"
+                  message:
+                    type: "string"
+                  data:
+                    type: "object"
+                    properties:
+                      userId:
+                        type: "string"
+                      name:
+                        type: "string"
+                      email:
+                        type: "string"
+        404:
+          description: "Not Found"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      status:
+                        type: "string"
+                      message:
+                        type: "string"
+        500:
+          description: "Error"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      status:
+                        type: "string"
+                      message:
+                        type: "string"
+  /api/v1/waitlists/{id}:
+    delete:
+      summary: "Delete a user from waitlist using id"
+      tags:
+        - "Waitlist"
+      parameters:
+        - in: "path"
+          name: "access_key"
+          required: true
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  status:
+                    type: "string"
+                  message:
+                    type: "string"
+                  key:
+                    type: "object"
+                    properties:
+                      accessKey:
+                        type: "string"
+                      created_At:
+                        type: "string"
+                      expiry:
+                        type: "string"
+                      status:
+                        type: "string"
+        404:
+          description: "Not Found"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      status:
+                        type: "string"
+                      message:
+                        type: "string"
+        500:
+          description: "Error"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      status:
+                        type: "string"
+                      message:
+                        type: "string"
+  /api/v1/marketing:
+    get:
+      summary: "Fetches content of marketing page"
+      tags:
+        - "Marketing page"
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: "Fetched marketing data"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  status:
+                    type: "string"
+                  message:
+                    type: "string"
+                  data:
+                    type: "object"
+        404:
+          description: "Not Found"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      status:
+                        type: "string"
+                      message:
+                        type: "string"
+        500:
+          description: "Error"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      status:
+                        type: "string"
+                      message:
+                        type: "string"
+  /api/v1/me/users:
+    get:
+      summary: "Exports users data"
+      tags:
+        - "Export User"
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: "Fetched marketing data"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  status:
+                    type: "string"
+                  message:
+                    type: "string"
+                  data:
+                    type: "object"
+        404:
+          description: "Not Found"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      status:
+                        type: "string"
+                      message:
+                        type: "string"
+        500:
+          description: "Error"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      status:
+                        type: "string"
+                      message:
+                        type: "string"
+components:
+  securitySchemes:
+    bearerAuth:
+      type: "http"
+      scheme: "bearer"
+      bearerFormat: "JWT"
+  schemas:
+    User:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+          example: 6
+        name:
+          type: "string"
+          format: "name"
+          example: "Test"
+        email:
+          type: "string"
+          format: "email"
+          example: "test@email.com"
+        password:
+          type: "string"
+          format: "password"
+          example: "12345678"
+        is_admin:
+          type: "boolean"
+        referrer_id:
+          type: "string"
+          format: "byte"
+          example: "U3BlYWtlYXN5IG1ha2VzIHdvcmtpbmcgd2l0aCBBUElzIGZ1biE="
+        created_at:
+          type: "string"
+          format: "date-time"
+          example: "2019-10-12T07:20:50.52Z"
+        updated_at:
+          type: "string"
+          format: "date-time"
+          example: "2022-10-12T07:20:50.52Z"
+    Notification:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+          example: 6
+        content:
+          type: "string"
+          example: "Welcome to our app."
+        is_read:
+          type: "boolean"
+          example: "true"
+        created_at:
+          type: "string"
+          format: "date-time"
+          example: "2022-10-12T07:20:50.52Z"
+    Organisation:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+          example: 6
+        name:
+          type: "string"
+          format: "name"
+          example: "Test's Organisation"
+        description:
+          type: "string"
+          format: "description"
+          example: "This is an organisation for learning"
+        created_at:
+          type: "string"
+          format: "date-time"
+          example: "2019-10-12T07:20:50.52Z"
+        updated_at:
+          type: "string"
+          format: "date-time"
+          example: "2022-10-12T07:20:50.52Z"
+    UserOrganisation:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+          example: 6
+        user_id:
+          type: "integer"
+          format: "int64"
+          example: 12
+        org_id:
+          type: "integer"
+          format: "int64"
+          example: 12
+    Transactions:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+          example: 6
+        user_id:
+          type: "integer"
+          format: "int64"
+          example: 8
+        amount:
+          type: "integer"
+          format: "int64"
+          example: 50000
+        reference_id:
+          type: "string"
+          format: "description"
+          example: "ascegdfu45904Xuco"
+        created_at:
+          type: "string"
+          format: "date-time"
+          example: "2019-10-12T07:20:50.52Z"
+        updated_at:
+          type: "string"
+          format: "date-time"
+          example: "2022-10-12T07:20:50.52Z"
+    Blog:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+          example: 6
+        user_id:
+          type: "integer"
+          format: "int64"
+          example: 14
+        title:
+          type: "string"
+          format: "title"
+          example: "How To ....."
+        content:
+          type: "string"
+          format: "content"
+          example: "Welcome to this introductory class on..."
+        thumbnail:
+          type: "string"
+          format: "content"
+          example: "https://....."
+        created_at:
+          type: "string"
+          format: "date-time"
+          example: "2019-10-12T07:20:50.52Z"
+        updated_at:
+          type: "string"
+          format: "date-time"
+          example: "2022-10-12T07:20:50.52Z"
+    Comment:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+          example: 6
+        user_id:
+          type: "integer"
+          format: "int64"
+          example: 14
+        blog_id:
+          type: "integer"
+          format: "int64"
+          example: 14
+        comment:
+          type: "string"
+          format: "title"
+          example: "How To ....."
+        created_at:
+          type: "string"
+          format: "date-time"
+          example: "2019-10-12T07:20:50.52Z"
+    Invites:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+          example: 6
+        invited_id:
+          type: "string"
+          format: "byte"
+          example: "U3BlYWtlYXN5IG1ha2VzIHdvcmtpbmcgd2l0aCBBUElzIGZ1biE="
+        invitee_id:
+          type: "integer"
+          format: "int64"
+          example: 12
+    InvitesLink:
+      type: "object"
+      properties:
+        referral_id:
+          type: "string"
+          format: "byte"
+          example: "U3BlYWtlYXN5IG1ha2VzIHdvcmtpbmcgd2l0aCBBUElzIGZ1biE="
+    ActivityLog:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+          description: "Unique identifier for the activity log entry"
+        user_id:
+          type: "integer"
+          format: "int64"
+          description: "ID of the user who performed the action"
+        action:
+          type: "string"
+          description: "Description of the action performed"
+        timestamp:
+          type: "string"
+          format: "date-time"
+          description: "Timestamp of when the action was performed"
+        details:
+          type: "string"
+          description: "Additional details about the action"
+      required:
+        - "id"
+        - "user_id"
+        - "action"
+        - "timestamp"
