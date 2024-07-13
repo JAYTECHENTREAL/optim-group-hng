@@ -8,6 +8,8 @@ const app = express();
 
 app.use("/documentation", swaggerUi.serve, swaggerUi.setup(apiDocumentation));
 
+
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });

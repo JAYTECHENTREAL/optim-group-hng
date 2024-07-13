@@ -41,6 +41,29 @@ export const userSchema = {
     },
   },
 };
+export const notificationSchema = {
+  type: 'object',
+  properties: {
+    id: {
+      type: 'integer',
+      format: 'int64',
+      example: 6,
+    },
+    content: {
+      type: 'string',
+      example: "Welcome to our app.",
+    },
+    is_read: {
+      type: 'boolean',
+      example: 'true',
+    },
+    created_at: {
+      type: 'string',
+      format: 'date-time',
+      example: '2022-10-12T07:20:50.52Z',
+    },
+  },
+};
 
 export const usersTransactions = {
   tags: ['user'],

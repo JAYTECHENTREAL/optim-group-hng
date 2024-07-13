@@ -21,10 +21,11 @@ import { invitesSchema } from './invites';
 import { contactUs, landingPages } from './landingPage';
 import { organisationSchema } from './organisations';
 import { profileSettings } from './profileSettings';
+import { inviteLink,notification } from './Notifications';
 import { settings } from './settings';
 import { transactionSchema } from './transactions';
 import { userOrganisationSchema } from './userorganisation';
-import { userSchema, usersTransactions } from './users';
+import { notificationSchema, userSchema, usersTransactions } from './users';
 
 export const apiDocumentation = {
   openapi: '3.1.0',
@@ -48,10 +49,6 @@ export const apiDocumentation = {
     },
   ],
   tags: [
-    {
-      name: 'User',
-      description: 'Everything about your Users',
-    },
     {
       name: 'Organisation',
       description: "Access to user's organisation(s)",
@@ -114,6 +111,8 @@ export const apiDocumentation = {
     },
     '/settings': settings,
     '/profile': profileSettings,
+    '/notifications': notification,
+    '/getInviteLink': inviteLink,
     '/landing/privacy-policy': landingPages.privacyPolicy,
     '/landing/about-us': landingPages.aboutUs,
     '/contact': contactUs,
@@ -128,6 +127,7 @@ export const apiDocumentation = {
     },
     schemas: {
       User: userSchema,
+      Notification: notificationSchema,
       Organisation: organisationSchema,
       UserOrganisation: userOrganisationSchema,
       EmailTemplates: emailTTemplateSchema,
